@@ -4,12 +4,14 @@ import MainScreen from './src/component/main/MainScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import TabNavigator from './src/component/navigator/TabNavigator';
 import StackNavigator from './src/component/navigator/StackNavigator';
-import DrawerMenu from './src/component/forms/DrawerMenu';
+import DrawerNavigator from './src/component/navigator/DrawerNavigator';
+import LoginScreen from './src/component/page/LoginScreen';
+
 
 export default function App() {
   return (
   <NavigationContainer>
-    <TabNavigator/>
+    <DrawerNavigator/>
       </NavigationContainer>
 
 

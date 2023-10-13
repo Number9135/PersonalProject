@@ -4,8 +4,10 @@ import MainScreen from '../main/MainScreen';
 import { Image, TouchableOpacity, View, Text, PixelRatio, StyleSheet } from 'react-native';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import { useNavigation } from '@react-navigation/native';
-import DrawerMenu from '../forms/DrawerMenu';
 import { Ionicons } from '@expo/vector-icons';
+import DrawerNavigator from './DrawerNavigator';
+import InfoCard from '../forms/InfoCard';
+import TabNavigator from './TabNavigator';
 
 const Stack = createStackNavigator();
 
@@ -22,7 +24,7 @@ const StackNavigator = () =>{
     return (
         <Stack.Navigator
             screenOptions={{
-                headerShown : true,
+                
                 headerLeft : null,
                 headerStyle: {
                     backgroundColor: "white",
@@ -33,12 +35,8 @@ const StackNavigator = () =>{
                 },
                 headerTitle : (props) => (
              
-                    <View style={styles.headerStyleContainer}>
                     <Image style={styles.logoStyle} resizeMode='contain' source={{uri:log.logoImage}}/>
-                    <TouchableOpacity onPress={()=>{navigation.navigate('드로우')}}>
-                        <Ionicons name="menu-outline" size={20} color="black" />
-                    </TouchableOpacity>
-                    </View>
+                  
                     
                 ),
                 headerTintColor: "black",
@@ -46,8 +44,8 @@ const StackNavigator = () =>{
             }}>
 
             {/* component={} 안에 페이지로 만들 컴포넌트를 넣음. 컴포넌트에 페이지 기능을 부여하는 코드*/}
-            <Stack.Screen name="메인페이지" component={MainScreen} />
-            <Stack.Screen name="사이드메뉴" component={DrawerMenu} />
+            <Stack.Screen name="메인페이지" component={MainScreen} options={{headerShown:false}} />
+            <Stack.Screen name="사이드메뉴" component={InfoCard} options={{headerShown:false}} />
 
 
         </Stack.Navigator>
