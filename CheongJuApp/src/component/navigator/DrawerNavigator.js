@@ -5,6 +5,7 @@ import TabNavigator from "./TabNavigator";
 import { Image, View, StyleSheet } from "react-native";
 import MainScreen from "../main/MainScreen";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
+import DrawerContent from "../forms/DrawerContent";
 
 
 const Drawer = createDrawerNavigator();
@@ -15,6 +16,7 @@ const DrawerNavigator = () => {
 }
   return (
     <Drawer.Navigator
+        drawerContent={props => <DrawerContent {...props}/>}
         screenOptions={{
           headerStyle : {backgroundColor : 'white'},
           headerLeft : false,
