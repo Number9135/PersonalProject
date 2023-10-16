@@ -1,8 +1,10 @@
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/core';
 
 const LoginScreen = () => {
+  const naivgation = useNavigation();
   const [isEmailFocus, setIsEmailFocus] = useState(false);
   const [isPwFocus, setIsPwFocus] = useState(false);
 
@@ -56,7 +58,8 @@ const LoginScreen = () => {
         </TouchableOpacity>
         <View style={{flexDirection:'row', marginTop:10,}}>
           <Text style={{fontSize:wp('3%'), fontWeight:'600'}}>아직 회원이 아니신가요?</Text>
-          <TouchableOpacity style={{marginLeft:10,}}>
+          <TouchableOpacity onPress={()=>{naivgation.navigate('회원가입')}}
+            style={{marginLeft:10,}}>
             <Text style={styles.signUpText}>가입하기.</Text>
           </TouchableOpacity>
         </View>
@@ -79,7 +82,7 @@ const styles = StyleSheet.create({
 
   loginImageContainer: {
     borderWidth: 0,
-    height: hp('40%'),
+    height: hp('30%'),
     width: wp('100%'),
     justifyContent: 'center',
     alignItems: 'center',
@@ -87,20 +90,20 @@ const styles = StyleSheet.create({
 
   loginContainer: {
     borderWidth: 0,
-    height: hp('40%'),
+    height: hp('30%'),
     width: wp('80%'),
   },
 
   sumitContainer: {
     borderWidth: 0,
     height: hp('20%'),
-    width: wp('100%'),
+    width: wp('80%'),
     justifyContent : 'center',
     alignItems : 'center'
   },
 
   imageStyle: {
-    height: hp('40%'),
+    height: hp('25%'),
     width: wp('80%'),
     opacity : 0.7
   },
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
 
   subTitleText : {
     fontSize : wp('3%'),
-    paddingTop : 5,
+    paddingTop : 3,
   },
 
   titleContainer : {
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
     borderWidth : 0,
     height : hp('20%'),
     justifyContent : 'space-around',
-    marginTop : 20,
+    marginTop : 5,
   },
 
   inputStyle : {
@@ -144,7 +147,8 @@ const styles = StyleSheet.create({
     justifyContent : 'center',
     alignItems : 'center',
     borderRadius : 5,
-    backgroundColor : 'black'
+    backgroundColor : 'black',
+    elevation : 10,
   },
 
   signUpText : {

@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import DrawerNavigator from './DrawerNavigator';
 import InfoCard from '../forms/InfoCard';
 import TabNavigator from './TabNavigator';
+import LoginScreen from '../page/LoginScreen';
+import SignUpScreen from '../page/SignUpScreen';
 
 const Stack = createStackNavigator();
 
@@ -46,6 +48,8 @@ const StackNavigator = () =>{
             {/* component={} 안에 페이지로 만들 컴포넌트를 넣음. 컴포넌트에 페이지 기능을 부여하는 코드*/}
             <Stack.Screen name="메인페이지" component={MainScreen} options={{headerShown:false}} />
             <Stack.Screen name="사이드메뉴" component={InfoCard} options={{headerShown:false}} />
+            <Stack.Screen name="로그인" component={LoginScreen} options={{headerShown:false}} />
+            <Stack.Screen name="회원가입" component={SignUpScreen} options={{headerShown:false}} />
 
 
         </Stack.Navigator>

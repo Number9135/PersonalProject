@@ -5,8 +5,13 @@ import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-nati
 import { Drawer, Avatar, Title, Caption, Image } from 'react-native-paper'
 import { DrawerContentScrollView, } from '@react-navigation/drawer';
 import { SimpleLineIcons, MaterialIcons  } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/core';
+;
 
 const DrawerContent = (props) => {
+
+const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
        
@@ -68,7 +73,8 @@ const DrawerContent = (props) => {
         </DrawerContentScrollView>
         
         <View style={{borderTopWidth:1, width:wp('60%'), height:hp('6%'),}}>
-            <TouchableOpacity style={styles.loginButton}>
+            <TouchableOpacity onPress={()=>{navigation.navigate('로그인')}}
+                style={styles.loginButton}>
                 <Text style={styles.loginText}>로그인하기</Text>
                 <MaterialIcons name="login" size={wp('5%')} color="black" />          
             </TouchableOpacity>
