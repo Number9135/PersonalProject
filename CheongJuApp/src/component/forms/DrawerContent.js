@@ -28,7 +28,8 @@ const navigation = useNavigation();
             </View>
             <View style={styles.menuContainer}>
                 <Text style={styles.menuTitle}>맛 집</Text>
-                    <TouchableOpacity style={styles.menuButton}>
+                    <TouchableOpacity onPress={()=>{navigation.navigate('음식')}}
+                        style={styles.menuButton}>
                         <Text style={styles.menuText}>음식</Text>
                         <SimpleLineIcons name="arrow-right" size={wp('3%')} color="black" />
                     </TouchableOpacity>

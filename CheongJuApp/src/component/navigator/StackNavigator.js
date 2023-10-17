@@ -10,6 +10,7 @@ import InfoCard from '../forms/InfoCard';
 import TabNavigator from './TabNavigator';
 import LoginScreen from '../page/LoginScreen';
 import SignUpScreen from '../page/SignUpScreen';
+import FoodScreen from '../page/FoodScreen';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,7 @@ const StackNavigator = () =>{
             <Stack.Screen name="사이드메뉴" component={InfoCard} options={{headerShown:false}} />
             <Stack.Screen name="로그인" component={LoginScreen} options={{headerShown:false}} />
             <Stack.Screen name="회원가입" component={SignUpScreen} options={{headerShown:false}} />
+            <Stack.Screen name="음식" component={FoodScreen} options={{headerShown:false}} />
 
 
         </Stack.Navigator>
