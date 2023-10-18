@@ -63,6 +63,10 @@ const LoginScreen = () => {
             <Text style={styles.signUpText}>가입하기.</Text>
           </TouchableOpacity>
         </View>
+          <TouchableOpacity onPress={()=>{naivgation.goBack()}}
+            style={{marginTop:10,}}>
+            <Text style={{fontSize:wp('3%'), fontWeight:'700'}}>취소하고 돌아가기</Text>
+          </TouchableOpacity>
       </View>
     </View>
   );

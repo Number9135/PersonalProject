@@ -31,12 +31,7 @@ const FoodScreen = () => {
     const [selectedButton, setSelectedButton] = useState(null);
   
     const handleButtonPress = (button) => {
-      if (selectedButton === button) {
-        setSelectedButton(null);
-      } 
-      else {
-        setSelectedButton(button);
-      }
+      setSelectedButton(button)
     };
 
   
@@ -48,7 +43,7 @@ const FoodScreen = () => {
                 handleButtonPress('all')
                 selectorMenu('all')
             }}
-              style={[styles.cateButton, ]}>
+              style={[styles.cateButton, selectedButton === 'all' && styles.buttonBackground]}>
               <Text style={[styles.cateButtonText,]}>전체</Text>
           </TouchableOpacity>
   
