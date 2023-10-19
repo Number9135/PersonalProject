@@ -20,7 +20,6 @@ const SignUpScreen = () => {
     try {
       if (inputPw === inputComparePw) {
         await createUserWithEmailAndPassword(auth, inputEmail, inputPw)
-        .then((userCredential)=>{const user = userCredential.user})
       } else {
         setError("Passwords don't match");
       }
@@ -29,16 +28,16 @@ const SignUpScreen = () => {
     }
   };
 
+
+
     const headerHeight = useHeaderHeight()
 
     const navigation = useNavigation();
     const [isEmailFocus, setIsEmailFocus] = useState(false);
     const [isPwFocus, setIsPwFocus] = useState(false);
-    const [isNickName, setIsNickName] = useState(false);
     const [isComparePw, setIsComparePw] = useState(false);
 
    const [inputEmail, setInputEmail] = useState('');
-   const [inputNickName, setInputNickName] = useState('');
    const [inputPw, setInputPw] = useState('');
    const [inputComparePw, setInputComparePw] = useState('');
 
@@ -86,27 +85,10 @@ const SignUpScreen = () => {
             <TextInput
               style={[
                 styles.inputStyle,
-                { borderColor: isNickName ? "black" : "gray", marginTop: 15 },
-              ]}
-              secureTextEntry={true}
-              placeholder="닉네임"
-              value={inputNickName}
-              onChangeText={setInputNickName}
-              clearButtonMode="while-editing"
-              borderWidth={1}
-              onFocus={() => setIsNickName(true)}
-              onBlur={() => setIsNickName(false)}
-              fontSize={wp("3%")}
-            />
-
-            <TextInput
-              style={[
-                styles.inputStyle,
                 { borderColor: isPwFocus ? "black" : "gray", marginTop: 15 },
               ]}
               secureTextEntry={true}
               placeholder="1차 비밀번호"
-              value={inputPw}
               onChangeText={setInputPw}
               clearButtonMode="while-editing"
               borderWidth={1}
@@ -123,7 +105,6 @@ const SignUpScreen = () => {
               secureTextEntry={true}
               placeholder="2차 비밀번호"
               onChangeText={setInputComparePw}
-              value={inputComparePw}
               clearButtonMode="while-editing"
               borderWidth={1}
               onFocus={() => setIsComparePw(true)}
@@ -138,7 +119,7 @@ const SignUpScreen = () => {
       
       <View style={styles.submitContainer}>
             <TouchableOpacity onPress={createAccount}
-            disabled={!inputEmail || !inputNickName || !inputPw || !inputComparePw}
+            disabled={!inputEmail || !inputPw || !inputComparePw}
             style={styles.signUpButton}>
                 <Text style={styles.buttonText}>회원가입</Text>
             </TouchableOpacity>
