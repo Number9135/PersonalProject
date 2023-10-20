@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/core';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { auth } from '../../../firebase.config';
+import {auth} from '../../../firebaseConfig';
 import {
   onAuthStateChanged,
   signOut,
@@ -13,22 +13,6 @@ import {
 
 
 const SignUpScreen = () => {
-
-  const [error, setError] = useState(null);
-
-  const createAccount = async () => {
-    try {
-      if (inputPw === inputComparePw) {
-        await createUserWithEmailAndPassword(auth, inputEmail, inputPw)
-      } else {
-        setError("Passwords don't match");
-      }
-    } catch (e) {
-      setError('There was a problem creating your account');
-    }
-  };
-
-
 
     const headerHeight = useHeaderHeight()
 
@@ -42,7 +26,41 @@ const SignUpScreen = () => {
    const [inputComparePw, setInputComparePw] = useState('');
 
 
-   console.log(inputPw, inputComparePw)
+   const [error, setError] = useState(null);
+
+  
+
+   const createAccount = async () => {
+    try {
+      await auth.signOut(); // 로그아웃
+      if (inputPw === inputComparePw) {
+        await auth.createUserWithEmailAndPassword(inputEmail, inputPw); // 다시 인증 시도
+      } else {
+        setError("비밀번호가 일치하지 않습니다.");
+      }
+    } catch (e) {
+      setError('회원가입 도중 문제가 발생했습니다.');
+    }
+  };
+  
+
+  const logout = async () => {
+    try {
+      await auth.signOut({uid : "KRDIrHNKiXgOoZbh40FPgNkj5EC3"});
+      console.log('성공')
+    } catch (e) {
+      console.log('로그아웃 도중 문제가 발생했습니다.', e);
+    }
+  };
+  
+
+  auth.onAuthStateChanged((user)=>{
+    if(user){
+      console.log("현재인증된 사용자", user)
+    }else{
+     console.log('없음')
+    }
+  })
 
    
 
@@ -119,7 +137,7 @@ const SignUpScreen = () => {
       
       <View style={styles.submitContainer}>
             <TouchableOpacity onPress={createAccount}
-            disabled={!inputEmail || !inputPw || !inputComparePw}
+            // disabled={!inputEmail || !inputPw || !inputComparePw}
             style={styles.signUpButton}>
                 <Text style={styles.buttonText}>회원가입</Text>
             </TouchableOpacity>
@@ -128,6 +146,9 @@ const SignUpScreen = () => {
                 <Text style={styles.gobackText}>취소하고 돌아가기</Text>
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={logout}>
+            <Text>로그아웃</Text>
+          </TouchableOpacity>
     </View>
     </ScrollView>
   );
