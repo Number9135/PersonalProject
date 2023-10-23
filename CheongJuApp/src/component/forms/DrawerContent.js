@@ -1,16 +1,36 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react';
+import React, {useState} from 'react';
 import { DrawerItem } from '@react-navigation/drawer';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import { Drawer, Avatar, Title, Caption, Image } from 'react-native-paper'
 import { DrawerContentScrollView, } from '@react-navigation/drawer';
 import { SimpleLineIcons, MaterialIcons  } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/core';
-;
+import { useNavigation, params } from '@react-navigation/core';
+import {logoutButton } from '../page/LoginScreen';
+import { auth } from '../../../firebaseConfig';
 
-const DrawerContent = (props) => {
+const DrawerContent = ({props}) => {
 
 const navigation = useNavigation();
+
+const [loggedIn, setLoggedIn] = useState(false);
+
+auth.onAuthStateChanged((user) => {
+  if(user){
+    setLoggedIn(true);
+  }else{
+    setLoggedIn(false);
+  }
+})
+
+const logoutHandler = async() => {
+    try{
+    await auth.signOut()
+    .then((res)=> res(console.log("성공")))
+}catch{
+    console.log("실패")
+}
+}
 
   return (
     <View style={styles.container}>
@@ -74,11 +94,23 @@ const navigation = useNavigation();
         </DrawerContentScrollView>
         
         <View style={{borderTopWidth:1, width:wp('60%'), height:hp('6%'),}}>
-            <TouchableOpacity onPress={()=>{navigation.navigate('로그인')}}
+           
+           
+           { 
+           loggedIn ? (
+
+            <TouchableOpacity onPress={logoutHandler}
+                style={styles.loginButton}>
+                <Text style={styles.loginText}>로그아웃</Text>
+                <MaterialIcons name="login" size={wp('5%')} color="black" />          
+            </TouchableOpacity>
+           ):(
+
+           <TouchableOpacity onPress={()=>{navigation.navigate('로그인')}}
                 style={styles.loginButton}>
                 <Text style={styles.loginText}>로그인하기</Text>
                 <MaterialIcons name="login" size={wp('5%')} color="black" />          
-            </TouchableOpacity>
+            </TouchableOpacity>)}
         </View>
     </View>
   )

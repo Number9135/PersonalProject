@@ -2,11 +2,41 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'reac
 import React, { useEffect, useState } from 'react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/core';
+import {auth} from '../../../firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const LoginScreen = () => {
-  const naivgation = useNavigation();
+  const navigation = useNavigation();
   const [isEmailFocus, setIsEmailFocus] = useState(false);
   const [isPwFocus, setIsPwFocus] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errMsg, setErrMsg] = useState('');
+
+  
+  
+  const loginHandler = () => {
+    auth.signInWithEmailAndPassword("dynamic_ys@naver.com", "dbstn721")
+    .then((userCredential)=>{const user = userCredential.user})
+    .then((res)=>console.log(res))
+    .then(()=>navigation.navigate("메인페이지"))
+  }
+
+  auth.onAuthStateChanged((user) => {
+    if(user){
+      console.log(auth.currentUser)
+    }else{
+      console.log('로그아웃');
+    }
+  })
+  
+
+    
+  useEffect(()=>{
+    setTimeout(()=>{
+      setEmail('');
+    }, 4000)
+  }, [errMsg])
 
   return (
     <View style={styles.container}>
@@ -28,6 +58,8 @@ const LoginScreen = () => {
             <TextInput 
               style={[styles.inputStyle, { borderColor: isEmailFocus ? 'black' : 'gray' }]}
               placeholder='Email을 입력하세요'
+              value={email}
+              onChangeText={setEmail}
               onFocus={() => setIsEmailFocus(true)}
               onBlur={() => setIsEmailFocus(false)}
               inputMode='email'
@@ -40,6 +72,8 @@ const LoginScreen = () => {
             <TextInput 
               style={[styles.inputStyle, { borderColor: isPwFocus ? 'black' : 'gray' }]}
               secureTextEntry={true}
+              value={password}
+              onChangeText={setPassword}
               placeholder='Password를 입력하세요'
               clearButtonMode='while-editing'
               borderWidth={1}
@@ -51,7 +85,8 @@ const LoginScreen = () => {
         </View>
       </View>
       <View style={styles.sumitContainer}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.submitButton}>
+        <TouchableOpacity onPress={loginHandler}
+        activeOpacity={0.8} style={styles.submitButton}>
           <Text style={{fontSize:wp('3%'), color:'white', fontWeight:'500'}}>
           로그인
           </Text>
@@ -63,7 +98,7 @@ const LoginScreen = () => {
             <Text style={styles.signUpText}>가입하기.</Text>
           </TouchableOpacity>
         </View>
-          <TouchableOpacity onPress={()=>{naivgation.goBack()}}
+          <TouchableOpacity onPress={()=>{navigation.goBack()}}
             style={{marginTop:10,}}>
             <Text style={{fontSize:wp('3%'), fontWeight:'700'}}>취소하고 돌아가기</Text>
           </TouchableOpacity>
