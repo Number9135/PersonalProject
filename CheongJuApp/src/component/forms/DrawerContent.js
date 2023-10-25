@@ -99,7 +99,9 @@ const logoutHandler = async() => {
            { 
            loggedIn ? (
 
-            <TouchableOpacity onPress={logoutHandler}
+            <TouchableOpacity onPress={()=>{logoutHandler()
+            alert('로그아웃 되었습니다.')
+        navigation.goBack()}}
                 style={styles.loginButton}>
                 <Text style={styles.loginText}>로그아웃</Text>
                 <MaterialIcons name="login" size={wp('5%')} color="black" />          
