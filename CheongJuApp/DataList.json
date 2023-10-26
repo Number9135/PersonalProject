@@ -1,0 +1,21 @@
+  {
+        "FoodMediumClassification" : [
+            {
+                "id" : "foodKorea",
+                "title" : "한식"
+              },
+              {
+                "id" : "foodJapan",
+                "title": "일식"
+              },
+              {
+                "id" : "foodChina",
+                "title" : "중식"
+              },
+              {
+                "id" : "foodWestorn",
+                "title" : "양식"
+              }
+            
+        ]
+  }
