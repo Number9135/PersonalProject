@@ -16,6 +16,8 @@ import { TouchableOpacity } from "react-native";
 import PickerSelect from "../forms/PickerSelect";
 import { Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import RatingStar from "../forms/RatingStar";
+import { KeyboardAvoidingView } from "react-native";
 
 export default function WritingScreen() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -23,6 +25,7 @@ export default function WritingScreen() {
   const [isMediumCategory, setIsMediumCategory] = useState("");
   const [images, setImages] = useState([]);
   const [isCamera, setIsCamera] = useState(false);
+  const [isDesc, setIsDesc] = useState('')
 
   const getPermission = async () => {
     if (Platform.OS !== "web") {
@@ -83,63 +86,124 @@ export default function WritingScreen() {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} Style={{flex:1}}>
+    <ScrollView showsVerticalScrollIndicator={false} Style={{ flex: 1 }}>
       <View style={styles.container}>
-      <Text style={styles.headerText}>게시물 작성</Text>
-      <TextInput
-        value={isTitle}
-        style={styles.titleTextInput}
-        onChangeText={setIsTitle}
-        placeholder="제목을 입력하세요."
-        fontSize={wp("4%")}
-      />
-      <View style={styles.photoContainer}>
-        {images.length > 0 &&
-          images.map((uri, index) => (
-         
-            <TouchableOpacity key={index} onPress={() => removeImage(index)}>
-              <Image source={{ uri }} style={styles.imageStyle} />
-            </TouchableOpacity>
-          
-          ))}
-        {images < 1 && (
-          <View style={{width:wp('80%'), height:hp('15%'), justifyContent: 'center', alignItems:'center'}}>
-          <TouchableOpacity
-            onPress={handlerPickImage}
-            style={styles.cameraButton}
-          >
-            <Entypo name="camera" size={wp("10%")} color="black" />
-            <Text style={{ fontSize: wp("4%") }}>사진을 담아 보세요</Text>
+        <Text style={styles.headerText}>게시물 작성</Text>
+        <TextInput
+          value={isTitle}
+          style={styles.titleTextInput}
+          onChangeText={setIsTitle}
+          placeholder="제목을 입력하세요."
+          fontSize={wp("4%")}
+        />
+        <View style={styles.photoContainer}>
+          {images.length > 0 &&
+            images.map((uri, index) => (
+              <TouchableOpacity key={index} onPress={() => removeImage(index)}>
+                <Image source={{ uri }} style={styles.imageStyle} />
+              </TouchableOpacity>
+            ))}
+          {images < 1 && (
+            <View
+              style={{
+                width: wp("80%"),
+                height: hp("15%"),
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <TouchableOpacity
+                onPress={handlerPickImage}
+                style={styles.cameraButton}
+              >
+                <Entypo name="camera" size={wp("10%")} color="black" />
+                <Text style={{ fontSize: wp("4%") }}>사진을 담아 보세요</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        <View
+          style={{
+            justifyContent: "flex-start",
+            width: wp("80%"),
+            marginTop: 5,
+          }}
+        >
+          <Text style={{ fontSize: wp("3%") }}>
+            * 사진은 최대 3장까지 업로그 가능합니다.
+          </Text>
+          <Text style={{ fontSize: wp("3%") }}>
+            * 업로드된 사진을 클릭하면 해당 사진이 삭제됩니다.
+          </Text>
+        </View>
+        <View style={styles.cateContainer}>
+          <TouchableOpacity onPress={openModal} style={styles.cateButton}>
+            <Text style={styles.buttonText}>분 류</Text>
           </TouchableOpacity>
+          <Text style={styles.selectedCateText}>{isMajorCategory}</Text>
+          <Text style={styles.selectedCateText}>{isMediumCategory}</Text>
+        </View>
+        <View style={styles.starContainer}>
+          <RatingStar />
+        </View>
+
+        <View style={styles.descContainer}>
+          <View
+            style={{
+              height: hp("5%"),
+              borderBottomWidth: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: wp("4%") }}>내용을 기입하세요</Text>
           </View>
-        )}
-      </View>
-      <View style={{justifyContent:'flex-start', width:wp('80%'), marginTop:5,}}>
-      <Text style={{fontSize:wp('3%')}}>* 사진은 최대 5장까지 업로그 가능합니다.</Text>
-      <Text style={{fontSize:wp('3%')}}>* 업로드된 사진을 클릭하면 해당 사진이 삭제됩니다.</Text>
-      </View>
-      <View style={styles.cateContainer}>
-        <TouchableOpacity onPress={openModal} style={styles.cateButton}>
-          <Text style={styles.buttonText}>분 류</Text>
-        </TouchableOpacity>
-        <Text style={styles.selectedCateText}>{isMajorCategory}</Text>
-        <Text style={styles.selectedCateText}>{isMediumCategory}</Text>
-      </View>
+          <KeyboardAvoidingView style={{ height: hp("40%") }}>
+            <TextInput
+              style={{ height: hp("40%") }}
+              multiline={true}
+              value={isDesc}
+              onChangeText={setIsDesc}
+              fontSize={wp("3.5%")}
+            />
+          </KeyboardAvoidingView>
+        </View>
 
-      <View style={styles.starContainer}>
+        <View
+          style={{
+            flexDirection: "row",
+            height: hp("10%"),
+            width: wp("80%"),
+            marginVertical: 10,
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <TouchableOpacity style={[styles.buttonStyle, {backgroundColor:'darkgray'}]}>
+            <Text style={styles.buttonText}>취소하기</Text>
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: wp("7%"),
+              fontWeight: "300",
+              alignSelf: "center",
+              height: hp("6%"),
+              color: "gray",
+            }}
+          >
+            |
+          </Text>
+          <TouchableOpacity style={[styles.buttonStyle, {backgroundColor:'yellow'}]}>
+            <Text style={styles.buttonText}>올리기</Text>
+          </TouchableOpacity>
+        </View>
 
-      </View>
-
-      <View style={styles.starContainer}>
-
-      </View>
-
-      <PickerSelect
-        onChangeMajorCategory={hnadleMajorCategoryButton}
-        onChangeMediumCategory={hadnleMediumCategotyButton}
-        modalVisible={modalVisible}
-        closeModal={closeModal}
-      />
+        <PickerSelect
+          onChangeMajorCategory={hnadleMajorCategoryButton}
+          onChangeMediumCategory={hadnleMediumCategotyButton}
+          modalVisible={modalVisible}
+          closeModal={closeModal}
+        />
       </View>
     </ScrollView>
   );
@@ -231,6 +295,26 @@ const styles = StyleSheet.create({
   starContainer : {
     borderWidth : 1,
     width : wp('80%'),
-    height : hp('25%')
+    height : hp('25%'),
+  },
+
+  descContainer : {
+    borderWidth : 1,
+    width : wp('80%'),
+    height : hp('40%'),
+    marginTop : 10,
+
+  },
+
+  buttonStyle : {
+    height : hp('5%'),
+    width : wp('30%'),
+    justifyContent : 'center',
+    alignItems : 'center',
+    elevation : 7,
+  },
+
+  buttonText : {
+    fontSize : wp('3.5%')
   }
 });
