@@ -3,6 +3,8 @@ import { View, Text, StyleSheet} from 'react-native';
 import StarRating from 'react-native-star-rating';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import PickerSelect from './PickerSelect';
+import { useSelector } from 'react-redux';
+import MajorCategorySlice from '../redux/modules/MajorCategorySlice';
 
 export default function RatingStar() {
   const [isFirstStarCount, setIsFirstStartCount] = useState(0);
@@ -13,12 +15,15 @@ export default function RatingStar() {
   const [isSecondtCategory, setIsSecondCategory] = useState('');
   const [isThirdCategory, setIsThirdCategory] = useState('');
 
-  const [onChangeMajorCategory, setOnChangeMajorCategory] = useState('');
 
- 
+  
+
+  const majorCategory = useSelector((state) => state.MajorCategorySlice.majorCategory);
+
   useEffect(() => {
+    
     // 대분류 선택 값에 따라 맛, 위생, 서비스/친절 카테고리 변경
-    if (onChangeMajorCategory === "음식") {
+    if (majorCategory === "음식") {
       setIsFirstCategory("맛");
       setIsSecondCategory("위생");
       setIsThirdCategory("서비스/친절");
@@ -27,7 +32,7 @@ export default function RatingStar() {
       setIsSecondCategory("위치");
       setIsThirdCategory("서비스");
     }
-  }, [onChangeMajorCategory]);
+  }, [majorCategory]);
 
   
 
