@@ -2,14 +2,13 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import DrawerNavigator from './src/component/navigator/DrawerNavigator';
 import { Provider } from 'react-redux';
-import Store from './src/component/redux/modules/Store';
-
+import {store} from './src/component/redux/modules/Store'
 
 
 
 export default function App() {
   return (
-    <Provider store={Store}>
+  <Provider store={store}>
     <NavigationContainer>
       <DrawerNavigator />
     </NavigationContainer>

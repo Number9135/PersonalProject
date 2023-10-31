@@ -4,7 +4,7 @@ import StarRating from 'react-native-star-rating';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import PickerSelect from './PickerSelect';
 import { useSelector } from 'react-redux';
-import MajorCategorySlice from '../redux/modules/MajorCategorySlice';
+
 
 export default function RatingStar() {
   const [isFirstStarCount, setIsFirstStartCount] = useState(0);
@@ -15,15 +15,25 @@ export default function RatingStar() {
   const [isSecondtCategory, setIsSecondCategory] = useState('');
   const [isThirdCategory, setIsThirdCategory] = useState('');
 
+  const pickMajorCategory = useSelector((state) => state.category.majorCategory)
+  const {kindOfCate} = {
+    isFirstCategory,
+    isSecondtCategory,
+    isThirdCategory
+  }
 
+  const {kindOfStar} = {
+    isFirstStarCount,
+    isSecondStarCount,
+    isThirdStarCount,
+  }
+  console.log(pickMajorCategory)
   
-
-  const majorCategory = useSelector((state) => state.MajorCategorySlice.majorCategory);
 
   useEffect(() => {
     
     // 대분류 선택 값에 따라 맛, 위생, 서비스/친절 카테고리 변경
-    if (majorCategory === "음식") {
+    if (pickMajorCategory === "음식") {
       setIsFirstCategory("맛");
       setIsSecondCategory("위생");
       setIsThirdCategory("서비스/친절");
@@ -32,7 +42,7 @@ export default function RatingStar() {
       setIsSecondCategory("위치");
       setIsThirdCategory("서비스");
     }
-  }, [majorCategory]);
+  }, [pickMajorCategory]);
 
   
 
@@ -52,7 +62,7 @@ export default function RatingStar() {
 
 
 
-  const averageRating = (isFirstStarCount+isSecondStarCount+isThirdStarCount)/3
+  const averageRating = ((isFirstStarCount+isSecondStarCount+isThirdStarCount)/3).toFixed(1)
 
 
   return (
@@ -60,7 +70,7 @@ export default function RatingStar() {
     <View style={styles.container}>
       <View style={styles.headerContinaer}>
         <Text style={styles.ratingText}>음식 별점</Text>
-        <Text style={[styles.ratingText, {marginLeft:5,}]}>평균 : {averageRating.toFixed(1)}</Text>
+        <Text style={[styles.ratingText, {marginLeft:5,}]}>평균 : {averageRating}</Text>
       </View>
       
         <View style={styles.contentStarContainer}>

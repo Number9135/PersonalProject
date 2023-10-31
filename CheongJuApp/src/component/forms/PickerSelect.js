@@ -16,8 +16,7 @@ import { Entypo } from "@expo/vector-icons";
 import DataList from "../../../DataList.json";
 import { useNavigation } from "@react-navigation/core";
 import { useDispatch, useSelector } from "react-redux";
-import { setMajorCategory } from "../redux/modules/MajorCategorySlice";
-
+import { selectMajorCategory } from "../redux/modules/CategorySlice";
 
 const PickerSelect = ({ modalVisible, closeModal, onChangeMajorCategory, onChangeMediumCategory }) => {
 
@@ -31,8 +30,8 @@ const PickerSelect = ({ modalVisible, closeModal, onChangeMajorCategory, onChang
 
   const handleButtonMajorPress = (button) => {
     setIsFocus(button);
-    // onChangeMajorCategory(button);
-    dispatch(setMajorCategory(button))
+    onChangeMajorCategory(button);
+    dispatch(selectMajorCategory(button))
   };
 
   const handleButtonMediumPress = (button) => {

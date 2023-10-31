@@ -8,13 +8,15 @@ const categorySlice = createSlice({
   name: "category",
   initialState,
   reducers: {
-    setMajorCategory: (state, action) => {
+    selectMajorCategory : (state, action) => {
       state.majorCategory = action.payload;
     },
   },
 });
 
-export const { setMajorCategory } = categorySlice.actions;
+export const { selectMajorCategory } = categorySlice.actions;
 export default categorySlice.reducer;
+
+
 
 

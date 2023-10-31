@@ -1,31 +1,45 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Platform,
-  Image,
-  ScrollView
-} from "react-native";
+import {  View, Text, StyleSheet, TextInput, Platform, Image, ScrollView } from "react-native";
 import React, { useState } from "react";
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from "react-native-responsive-screen";
+import {  widthPercentageToDP as wp, heightPercentageToDP as hp, } from "react-native-responsive-screen";
 import { TouchableOpacity } from "react-native";
 import PickerSelect from "../forms/PickerSelect";
 import { Entypo } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import RatingStar from "../forms/RatingStar";
 import { KeyboardAvoidingView } from "react-native";
+import { firebase_db } from "../../../firebaseConfig";
 
-export default function WritingScreen() {
+export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
   const [modalVisible, setModalVisible] = useState(false);
   const [isMajorCategory, setIsMajorCategory] = useState("");
   const [isMediumCategory, setIsMediumCategory] = useState("");
   const [images, setImages] = useState([]);
   const [isCamera, setIsCamera] = useState(false);
   const [isDesc, setIsDesc] = useState('')
+  const [isTitle, setIsTitle] = useState("");
+
+  const [createDate, setCreateData] = useState({
+    title : isTitle,
+    image : images,
+    majorCate : isMajorCategory,
+    mediumCate : isMediumCategory,
+    totalScore : averageRating,
+    kindOfCate : kindOfCate,
+    kindOfCount : kindOfStar,
+    desc : isDesc
+  })
+
+  const errMsg = "올리기 실패"
+
+  const onSubmit = async() => {
+    try{
+      await firebase_db.ref('/WritingScreen/').set(createDate)
+    .then((r)=>r(console.log("성공")))
+    }catch{
+      console.log(errMsg)
+    }
+    
+  }
 
   const getPermission = async () => {
     if (Platform.OS !== "web") {
@@ -67,7 +81,7 @@ export default function WritingScreen() {
     }
   };
 
-  const [isTitle, setIsTitle] = useState("");
+  
 
   const openModal = () => {
     setModalVisible(true);
@@ -144,7 +158,7 @@ export default function WritingScreen() {
           <Text style={styles.selectedCateText}>{isMediumCategory}</Text>
         </View>
         <View style={styles.starContainer}>
-          <RatingStar />
+          <RatingStar totalScore={averageRating} selectedCate={kindOfCate} kindOfCount={kindOfStar} />
         </View>
 
         <View style={styles.descContainer}>
@@ -193,7 +207,8 @@ export default function WritingScreen() {
           >
             |
           </Text>
-          <TouchableOpacity style={[styles.buttonStyle, {backgroundColor:'yellow'}]}>
+          <TouchableOpacity onPress={onSubmit}
+          style={[styles.buttonStyle, {backgroundColor:'yellow'}]}>
             <Text style={styles.buttonText}>올리기</Text>
           </TouchableOpacity>
         </View>
