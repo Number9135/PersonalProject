@@ -13,6 +13,7 @@ import SignUpScreen from '../page/SignUpScreen';
 import FoodScreen from '../page/FoodScreen';
 import DrawerContent from '../forms/DrawerContent';
 import MyPage from '../page/MyPage';
+import FoodDetailScreen from '../page/FoodDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -56,6 +57,7 @@ const StackNavigator = () =>{
             <Stack.Screen name="음식" component={FoodScreen} options={{headerShown:false}} />
             <Stack.Screen name="Drawer" component={DrawerContent} options={{headerShown:false}} />
             <Stack.Screen name="마이페이지" component={MyPage} options={{headerShown:false}} />
+            <Stack.Screen name="음식상세페이지" component={FoodDetailScreen} options={{headerShown:false}} />
 
 
         </Stack.Navigator>

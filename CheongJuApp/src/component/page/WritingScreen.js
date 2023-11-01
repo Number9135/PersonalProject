@@ -1,4 +1,4 @@
-import {  View, Text, StyleSheet, TextInput, Platform, Image, ScrollView } from "react-native";
+import {  View, Text, StyleSheet, TextInput, Platform, Image, ScrollView, Alert } from "react-native";
 import React, { useState } from "react";
 import {  widthPercentageToDP as wp, heightPercentageToDP as hp, } from "react-native-responsive-screen";
 import { TouchableOpacity } from "react-native";
@@ -8,8 +8,15 @@ import * as ImagePicker from "expo-image-picker";
 import RatingStar from "../forms/RatingStar";
 import { KeyboardAvoidingView } from "react-native";
 import { firebase_db } from "../../../firebaseConfig";
+import { auth } from "../../../firebaseConfig";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/core";
+import { selectSecondRating, selectThirdRating, selectFirstRating } from "../redux/modules/RatingStarSlice";
+
 
 export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
+  const dispatch = useDispatch()
+  const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const [isMajorCategory, setIsMajorCategory] = useState("");
   const [isMediumCategory, setIsMediumCategory] = useState("");
@@ -17,28 +24,83 @@ export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
   const [isCamera, setIsCamera] = useState(false);
   const [isDesc, setIsDesc] = useState('')
   const [isTitle, setIsTitle] = useState("");
+  const firstRating = useSelector((state)=>state.ratingStar.firstRatingStar);
+  const secondRating = useSelector((state)=>state.ratingStar.secondRatingStar);
+  const thirdRating = useSelector((state)=>state.ratingStar.thirdRatingStar);
+  const totalRating = ((firstRating+secondRating+thirdRating)/3).toFixed(1)
 
-  const [createDate, setCreateData] = useState({
-    title : isTitle,
-    image : images,
-    majorCate : isMajorCategory,
-    mediumCate : isMediumCategory,
-    totalScore : averageRating,
-    kindOfCate : kindOfCate,
-    kindOfCount : kindOfStar,
-    desc : isDesc
+
+  const sucessAlert = () => {
+  return (
+    Alert.alert('게시물이 작성되었습니다.', '이전 페이지로 돌아갑니다.',[
+        {
+        onPress : () => navigation.goBack()
+      }
+      ])
+  )
+}
+
+
+ 
+
+  auth.onAuthStateChanged((user) => {
+    if(user){
+      uid = user.uid
+    }
   })
 
   const errMsg = "올리기 실패"
 
   const onSubmit = async() => {
     try{
-      await firebase_db.ref('/WritingScreen/').set(createDate)
-    .then((r)=>r(console.log("성공")))
+      await firebase_db.ref(`/${isMajorCategory}`).push({
+        uid : uid,
+        title : isTitle,
+        image : images,
+        majorCate : isMajorCategory,
+        mediumCate : isMediumCategory,
+        desc : isDesc,
+        firstRating : firstRating,
+        secondRating : secondRating,
+        thirdRating : thirdRating,
+        totalRating : totalRating,
+      })
+      .then(()=>{sucessAlert()
+      setIsTitle('')
+      setImages([])
+      setIsMajorCategory("")
+      setIsMediumCategory("")
+      setIsDesc("")
+      dispatch(selectFirstRating(0))
+      dispatch(selectSecondRating(0))
+      dispatch(selectThirdRating(0))
+    })
     }catch{
       console.log(errMsg)
     }
     
+  }
+
+  const goBackHandler = () => {
+    Alert.alert('', '작성을 취소하시겠습니까?',[
+      {
+        text : "취소하하기",
+        onPress : () => {navigation.goBack()
+          setIsTitle('')
+          setImages([])
+          setIsMajorCategory("")
+          setIsMediumCategory("")
+          setIsDesc("")
+          dispatch(selectFirstRating(0))
+          dispatch(selectSecondRating(0))
+          dispatch(selectThirdRating(0))},
+        
+    },
+    {
+        text : "계속작성하기",
+      
+    },
+    ])
   }
 
   const getPermission = async () => {
@@ -60,7 +122,6 @@ export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
   };
 
   const handlerPickImage = async () => {
-    // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -69,7 +130,6 @@ export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
       quality: 1,
     });
 
-    console.log(result);
 
     if (!result.canceled) {
       const newImages = result.assets.map((asset) => asset.uri);
@@ -158,7 +218,7 @@ export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
           <Text style={styles.selectedCateText}>{isMediumCategory}</Text>
         </View>
         <View style={styles.starContainer}>
-          <RatingStar totalScore={averageRating} selectedCate={kindOfCate} kindOfCount={kindOfStar} />
+          <RatingStar/>
         </View>
 
         <View style={styles.descContainer}>
@@ -193,7 +253,8 @@ export default function WritingScreen({averageRating, kindOfCate, kindOfStar}) {
             justifyContent: "space-around",
           }}
         >
-          <TouchableOpacity style={[styles.buttonStyle, {backgroundColor:'darkgray'}]}>
+          <TouchableOpacity onPress={goBackHandler}
+          style={[styles.buttonStyle, {backgroundColor:'darkgray'}]}>
             <Text style={styles.buttonText}>취소하기</Text>
           </TouchableOpacity>
           <Text

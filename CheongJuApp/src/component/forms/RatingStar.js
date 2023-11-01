@@ -3,36 +3,25 @@ import { View, Text, StyleSheet} from 'react-native';
 import StarRating from 'react-native-star-rating';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import PickerSelect from './PickerSelect';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectFirstRating, selectSecondRating, selectThirdRating } from '../redux/modules/RatingStarSlice';
 
 
 export default function RatingStar() {
-  const [isFirstStarCount, setIsFirstStartCount] = useState(0);
-  const [isSecondStarCount, setIsSecondStartCount] = useState(0);
-  const [isThirdStarCount, setIsThirdStartCount] = useState(0);
+  const dispatch = useDispatch();
 
   const [isFirstCategory, setIsFirstCategory] = useState('');
   const [isSecondtCategory, setIsSecondCategory] = useState('');
   const [isThirdCategory, setIsThirdCategory] = useState('');
 
-  const pickMajorCategory = useSelector((state) => state.category.majorCategory)
-  const {kindOfCate} = {
-    isFirstCategory,
-    isSecondtCategory,
-    isThirdCategory
-  }
+  const firstRating = useSelector((state)=>state.ratingStar.firstRatingStar);
+  const secondRating = useSelector((state)=>state.ratingStar.secondRatingStar);
+  const thirdRating = useSelector((state)=>state.ratingStar.thirdRatingStar);
 
-  const {kindOfStar} = {
-    isFirstStarCount,
-    isSecondStarCount,
-    isThirdStarCount,
-  }
-  console.log(pickMajorCategory)
-  
+  const pickMajorCategory = useSelector((state) => state.category.majorCategory)
+ 
 
   useEffect(() => {
-    
-    // 대분류 선택 값에 따라 맛, 위생, 서비스/친절 카테고리 변경
     if (pickMajorCategory === "음식") {
       setIsFirstCategory("맛");
       setIsSecondCategory("위생");
@@ -46,23 +35,19 @@ export default function RatingStar() {
 
   
 
-  const onFristStarRatingPress = (rating) => {
-    setIsFirstStartCount(rating);
+  const onFirstStarRatingPress = (rating) => {
+    dispatch(selectFirstRating(rating))
   };
 
   const onSecondStarRatingPress = (rating) => {
-    setIsSecondStartCount(rating);
+    dispatch(selectSecondRating(rating))
   };
 
   const onThirdStarRatingPress = (rating) => {
-    setIsThirdStartCount(rating);
+    dispatch(selectThirdRating(rating))
   };
 
-
-
-
-
-  const averageRating = ((isFirstStarCount+isSecondStarCount+isThirdStarCount)/3).toFixed(1)
+  const averageRating = ((firstRating+secondRating+thirdRating)/3).toFixed(1)
 
 
   return (
@@ -85,12 +70,12 @@ export default function RatingStar() {
               starSize={wp("5%")}
               disabled={false}
               maxStars={5}
-              rating={isFirstStarCount}
-              selectedStar={(rating) => onFristStarRatingPress(rating)}
+              rating={firstRating}
+              selectedStar={(rating) => onFirstStarRatingPress(rating)}
             />
           </View>
           <View style={styles.ratingScaleTextContainer}>
-            <Text style={styles.ratingScaleText}>{isFirstStarCount}/5</Text>
+            <Text style={styles.ratingScaleText}>{firstRating}/5</Text>
           </View>
         </View>
 
@@ -105,12 +90,12 @@ export default function RatingStar() {
               starSize={wp("5%")}
               disabled={false}
               maxStars={5}
-              rating={isSecondStarCount}
+              rating={secondRating}
               selectedStar={(rating) => onSecondStarRatingPress(rating)}
             />
           </View>
           <View style={styles.ratingScaleTextContainer}>
-            <Text style={styles.ratingScaleText}>{isSecondStarCount}/5</Text>
+            <Text style={styles.ratingScaleText}>{secondRating}/5</Text>
           </View>
         </View>
 
@@ -126,12 +111,12 @@ export default function RatingStar() {
               starSize={wp("5%")}
               disabled={false}
               maxStars={5}
-              rating={isThirdStarCount}
+              rating={thirdRating}
               selectedStar={(rating) => onThirdStarRatingPress(rating)}
             />
           </View>
           <View style={styles.ratingScaleTextContainer}>
-            <Text style={styles.ratingScaleText}>{isThirdStarCount}/5</Text>
+            <Text style={styles.ratingScaleText}>{thirdRating}/5</Text>
           </View>
         </View>
         
