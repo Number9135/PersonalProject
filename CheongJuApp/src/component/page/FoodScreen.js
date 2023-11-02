@@ -162,7 +162,7 @@ const FoodScreen = () => {
           renderItem={({ item }) => (
             <TouchableOpacity onPress={()=>{navigation.navigate('음식상세페이지', {
              title : item.title,
-             image : item.image[0],
+             image : item.image,
              desc : item.desc,
              firstRating : item.firstRating,
              secondRating : item.secondRating,
