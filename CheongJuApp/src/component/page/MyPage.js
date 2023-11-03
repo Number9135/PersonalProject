@@ -3,9 +3,13 @@ import React from 'react';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import { Avatar } from 'react-native-paper';
 import { MaterialIcons, Ionicons, Feather, MaterialCommunityIcons   } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/core';
 
 
 export default function MyPage() {
+
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
@@ -39,7 +43,8 @@ export default function MyPage() {
               justifyContent: "space-around",
             }}
           >
-            <TouchableOpacity style={styles.cateButtonStyle}>
+            <TouchableOpacity onPress={()=>{navigation.navigate('프로필꾸미기')}}
+            style={styles.cateButtonStyle}>
               <View style={styles.iconContainer}>
                 <Ionicons
                   name="ios-person-circle-outline"
