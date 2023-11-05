@@ -8,6 +8,7 @@ import { SimpleLineIcons, MaterialIcons  } from '@expo/vector-icons';
 import { useNavigation, params } from '@react-navigation/core';
 import {logoutButton } from '../page/LoginScreen';
 import { auth } from '../../../firebaseConfig';
+import MyPage from '../page/MyPage';
 
 const DrawerContent = ({props}) => {
 
@@ -85,7 +86,8 @@ const logoutHandler = async() => {
 
             <View style={styles.myContainer}>
                 <Text style={styles.menuTitle}>내정보</Text>
-                    <TouchableOpacity style={styles.menuButton}>
+                    <TouchableOpacity onPress={()=>{navigation.navigate('마이페이지')}}
+                    style={styles.menuButton}>
                         <Text style={styles.menuText}>마이페이지</Text>
                         <SimpleLineIcons name="arrow-right" size={wp('3%')} color="black" />
                     </TouchableOpacity>

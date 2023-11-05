@@ -4,65 +4,93 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { useNavigation } from '@react-navigation/core';
 import { useHeaderHeight } from '@react-navigation/elements';
 import {auth} from '../../../firebaseConfig';
-import {
-  onAuthStateChanged,
-  signOut,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import { firebase_db } from '../../../firebaseConfig';
 
 
 const SignUpScreen = () => {
 
     const headerHeight = useHeaderHeight()
 
-    const navigation = useNavigation();
-    const [isEmailFocus, setIsEmailFocus] = useState(false);
-    const [isPwFocus, setIsPwFocus] = useState(false);
-    const [isComparePw, setIsComparePw] = useState(false);
+  const navigation = useNavigation();
+  const [isEmailFocus, setIsEmailFocus] = useState(false);
+  const [isPwFocus, setIsPwFocus] = useState(false);
+  const [isComparePw, setIsComparePw] = useState(false);
+  const [isNickname, setIsNickname] = useState(false);
+  const [inputEmail, setInputEmail] = useState('');
+  const [inputPw, setInputPw] = useState('');
+  const [inputComparePw, setInputComparePw] = useState('');
+  const [inputNickname, setInputNickname] = useState('');
+  const [error, setError] = useState(null);
+  const [isCheck, setIsCheck] = useState(null);
 
-   const [inputEmail, setInputEmail] = useState('');
-   const [inputPw, setInputPw] = useState('');
-   const [inputComparePw, setInputComparePw] = useState('');
+  const getUserInfo = firebase_db.ref('/users').get();
+
+  const checkDuplication = async() => {
+    try{
+      if(getUserInfo.UserEmail !== inputEmail){
+        setIsCheck(true)
+      }else{
+        setIsCheck(false)
+      }
+    }catch{
+      Alert.Alert('인중에 문제가 생겼습니다.', '잠시 후 다시 시도해 주십시오.', [{
+        text : '닫기',  
+      }])
+    }
+  }
+
+   const currentTime = new Date();
+
+   const isDate = {
+    yaer : currentTime.getFullYear(),
+    month : currentTime.getMonth() + 1,
+    day : currentTime.getDay(),
+    hour : currentTime.getHours(),
+    minute : currentTime.getMinutes(),
+    second : currentTime.getSeconds(),
+   }
+
+   const createDate = 
+    isDate.yaer + '-' +isDate.month + '-' + isDate.day + '-' + isDate.hour + '-' + isDate.minute + '-' + isDate.second
 
 
-   const [error, setError] = useState(null);
+ 
 
-  
-
-   const createAccount = async () => {
-    try {
-      await auth.signOut(); // 로그아웃
-      if (inputPw === inputComparePw) {
-        await auth.createUserWithEmailAndPassword(inputEmail, inputPw); // 다시 인증 시도
-      } else {
+  const createAccount = async () => {
+    try{
+      if(inputPw === inputComparePw){
+        await auth.createUserWithEmailAndPassword(inputEmail, inputPw)
+        .then(() => {
+          auth.currentUser.updateProfile({
+            displayName : inputNickname,
+          }).then(()=>{
+            firebase_db.ref('users/' + auth.currentUser.uid + '/profile').push({
+              UserName : inputNickname,
+              UserEmail : inputEmail,
+              Password : inputPw,
+              CreateDate : createDate
+            })
+          }).then(()=>console.log('성공'))
+        })
+      }else{
         setError("비밀번호가 일치하지 않습니다.");
       }
-    } catch (e) {
+    }catch{
       setError('회원가입 도중 문제가 발생했습니다.');
     }
-  };
-  
-
-  const logout = async () => {
-    try {
-      await auth.signOut({uid : "KRDIrHNKiXgOoZbh40FPgNkj5EC3"});
-      console.log('성공')
-    } catch (e) {
-      console.log('로그아웃 도중 문제가 발생했습니다.', e);
-    }
-  };
-  
+  }
 
   auth.onAuthStateChanged((user)=>{
     if(user){
       console.log("현재인증된 사용자", user)
     }else{
-     console.log('없음')
+     //console.log('없음')
     }
   })
 
-   
+ const signOut = async () =>{
+  await auth.signOut()
+ }
 
   return (
     <ScrollView>
@@ -97,6 +125,27 @@ const SignUpScreen = () => {
               borderWidth={1}
               onFocus={() => setIsEmailFocus(true)}
               onBlur={() => setIsEmailFocus(false)}
+              fontSize={wp("3%")}
+            />
+            {
+              isCheck ? (
+                <Text>사용 가능합니다.</Text>
+              ) : (
+                <Text>이미 존재하는 이메일입니다.</Text>
+              )
+            }
+
+              <TextInput
+              style={[
+                styles.inputStyle,
+                { borderColor: isPwFocus ? "black" : "gray", marginTop: 15 },
+              ]}
+              placeholder="닉네임"
+              onChangeText={setInputNickname}
+              clearButtonMode="while-editing"
+              borderWidth={1}
+              onFocus={() => setIsNickname(true)}
+              onBlur={() => setIsNickname(false)}
               fontSize={wp("3%")}
             />
 
@@ -146,7 +195,8 @@ const SignUpScreen = () => {
                 <Text style={styles.gobackText}>취소하고 돌아가기</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={logout}>
+          <TouchableOpacity onPress={signOut}
+          style={{bottom:20}}>
             <Text>로그아웃</Text>
           </TouchableOpacity>
     </View>

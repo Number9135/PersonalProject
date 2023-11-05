@@ -93,7 +93,7 @@ const LoginScreen = () => {
         </TouchableOpacity>
         <View style={{flexDirection:'row', marginTop:10,}}>
           <Text style={{fontSize:wp('3%'), fontWeight:'600'}}>아직 회원이 아니신가요?</Text>
-          <TouchableOpacity onPress={()=>{naivgation.navigate('회원가입')}}
+          <TouchableOpacity onPress={()=>{navigation.navigate('회원가입')}}
             style={{marginLeft:10,}}>
             <Text style={styles.signUpText}>가입하기.</Text>
           </TouchableOpacity>
