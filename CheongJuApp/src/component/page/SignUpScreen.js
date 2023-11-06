@@ -23,19 +23,24 @@ const SignUpScreen = () => {
   const [error, setError] = useState(null);
   const [isCheck, setIsCheck] = useState(null);
 
-  const getUserInfo = firebase_db.ref('/users').get();
 
-  const checkDuplication = async() => {
+  const checkDuplication = (email) => {
+    console.log(email)
     try{
-      if(getUserInfo.UserEmail !== inputEmail){
-        setIsCheck(true)
-      }else{
-        setIsCheck(false)
-      }
+      firebase_db.ref('users').orderByChild("profile/UserEmail")
+      .equalTo(email)
+      .once('value')
+      .then((snapshot)=>{ 
+        if(snapshot.exists()){
+          console.log('이미 존재합니다.')
+          setIsCheck('존재');
+        }else{
+          console.log('사용 가능합니다.')
+          setIsCheck('미존재')
+        }
+      })
     }catch{
-      Alert.Alert('인중에 문제가 생겼습니다.', '잠시 후 다시 시도해 주십시오.', [{
-        text : '닫기',  
-      }])
+      console.log('잠시 후 시도해 주십시오.')
     }
   }
 
@@ -64,7 +69,7 @@ const SignUpScreen = () => {
           auth.currentUser.updateProfile({
             displayName : inputNickname,
           }).then(()=>{
-            firebase_db.ref('users/' + auth.currentUser.uid + '/profile').push({
+            firebase_db.ref('users/' + auth.currentUser.uid + '/profile').set({
               UserName : inputNickname,
               UserEmail : inputEmail,
               Password : inputPw,
@@ -111,6 +116,7 @@ const SignUpScreen = () => {
         }
         <View style={styles.textInputContainer}>
           <View>
+            <View style={styles.invidualTextInputContainer}>
             <TextInput
               style={[
                 styles.inputStyle,
@@ -127,14 +133,22 @@ const SignUpScreen = () => {
               onBlur={() => setIsEmailFocus(false)}
               fontSize={wp("3%")}
             />
-            {
-              isCheck ? (
-                <Text>사용 가능합니다.</Text>
-              ) : (
-                <Text>이미 존재하는 이메일입니다.</Text>
-              )
-            }
+            <TouchableOpacity onPress={()=>checkDuplication(inputEmail)}
+              style={styles.duplicationButton}>
+              <Text>중복확인</Text>
+            </TouchableOpacity>
+          </View>
+          {
+            isCheck === '존재' && (
+              <Text>이미 존재하는 이메일입니다.</Text>
+            )
+          }
 
+          {
+            isCheck === '미존재' && (
+              <Text>사용 가능합니다.</Text>
+            )
+          }
               <TextInput
               style={[
                 styles.inputStyle,
@@ -234,12 +248,13 @@ const styles = StyleSheet.create({
         marginTop : 10,
     },
     inputStyle : {
-        width : wp('80%'),
+        width : wp('60%'),
         height : hp('5%'),
-        marginTop : 5,
+        marginTop : 0,
         paddingLeft : 10,
         borderRadius : 5,
         opacity : 1,
+   
         
       
       },
@@ -276,5 +291,25 @@ const styles = StyleSheet.create({
 
       gobackText : {
         fontSize : wp('3.5%')
+      },
+
+      invidualTextInputContainer : {
+        flexDirection : 'row',
+        justifyContent : 'space-between',
+        borderWidth : 1,
+        width : wp('85%'),
+        alignItems : 'center',
+        height : hp('7%'),
+        
+      },
+
+      duplicationButton : {
+        borderWidth : 1,
+        height : hp('5%'),
+        width : wp('20%'),
+        justifyContent : 'center',
+        alignItems : 'center',
+        borderRadius : 5,
+
       }
 })
