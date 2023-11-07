@@ -7,6 +7,8 @@ import {auth} from '../../../firebaseConfig';
 import { firebase_db } from '../../../firebaseConfig';
 
 
+
+
 const SignUpScreen = () => {
 
     const headerHeight = useHeaderHeight()
@@ -22,48 +24,80 @@ const SignUpScreen = () => {
   const [inputNickname, setInputNickname] = useState('');
   const [error, setError] = useState(null);
   const [isCheck, setIsCheck] = useState(null);
+  const [nextNickname, setNextNickname] = useState(false);
+  const [nextPw, setNextPw] = useState(false);
+  const [nextComparePw, setNextComparePw] = useState(false);
+  const currentTime = new Date();
+
+  const isDate = {
+   yaer : currentTime.getFullYear(),
+   month : currentTime.getMonth() + 1,
+   day : currentTime.getDay(),
+   hour : currentTime.getHours(),
+   minute : currentTime.getMinutes(),
+   second : currentTime.getSeconds(),
+  }
+
+  const createDate = 
+   isDate.yaer + '-' +isDate.month + '-' + isDate.day + '-' + isDate.hour + '-' + isDate.minute + '-' + isDate.second
 
 
-  const checkDuplication = (email) => {
-    console.log(email)
+  const checkEmailDuplication = (email) => {
+    const emailRegex = new RegExp('^[a-zA-Z0-9+-\_.]+@[a-zA-Z0-9-]+\.[a-zA-Z-.]+$')
     try{
       firebase_db.ref('users').orderByChild("profile/UserEmail")
       .equalTo(email)
       .once('value')
       .then((snapshot)=>{ 
-        if(snapshot.exists()){
-          console.log('이미 존재합니다.')
-          setIsCheck('존재');
+        console.log(snapshot)
+        if(email.match(emailRegex)){
+          if(snapshot.exists()){
+            console.log('이미 존재합니다.')
+            setIsCheck('존재');
+          }else{
+            console.log('사용 가능합니다.')
+            setNextNickname(true)
+            setIsCheck('미존재')
+          }
         }else{
-          console.log('사용 가능합니다.')
-          setIsCheck('미존재')
+          setIsCheck('잘못된 형식')
         }
-      })
+    })
     }catch{
       console.log('잠시 후 시도해 주십시오.')
     }
   }
 
-   const currentTime = new Date();
-
-   const isDate = {
-    yaer : currentTime.getFullYear(),
-    month : currentTime.getMonth() + 1,
-    day : currentTime.getDay(),
-    hour : currentTime.getHours(),
-    minute : currentTime.getMinutes(),
-    second : currentTime.getSeconds(),
-   }
-
-   const createDate = 
-    isDate.yaer + '-' +isDate.month + '-' + isDate.day + '-' + isDate.hour + '-' + isDate.minute + '-' + isDate.second
-
-
- 
+  const checkNicknameDuplication = (nickname) => {
+    const nicknameRegex = new RegExp('^[가-힣a-zA-Z0-9]+$')
+    console.log(nickname)
+    try{
+      firebase_db.ref('users').orderByChild("profile/UserName")
+      .equalTo(nickname)
+      .once('value')
+      .then((snapshot)=>{ 
+        console.log(snapshot)
+        if(nickname.match(nicknameRegex)){
+          if(snapshot.exists()){
+            console.log('이미 존재합니다.')
+            setIsCheck('닉네임 존재');
+          }else{
+            console.log('사용 가능합니다.')
+            setNextPw(true)
+            setIsCheck('닉네임 미존재')
+          }
+        }else{
+          setIsCheck('닉네임 잘못된 형식')
+        }
+    })
+    }catch{
+      console.log('잠시 후 시도해 주십시오.')
+    }
+  }
 
   const createAccount = async () => {
     try{
-      if(inputPw === inputComparePw){
+      if(inputPw === inputComparePw && nextNickname && nextPw){
         await auth.createUserWithEmailAndPassword(inputEmail, inputPw)
         .then(() => {
           auth.currentUser.updateProfile({
@@ -75,7 +109,7 @@ const SignUpScreen = () => {
               Password : inputPw,
               CreateDate : createDate
             })
-          }).then(()=>console.log('성공'))
+          }).then(()=> navigation.navigate('메인페이지'))
         })
       }else{
         setError("비밀번호가 일치하지 않습니다.");
@@ -84,6 +118,27 @@ const SignUpScreen = () => {
       setError('회원가입 도중 문제가 발생했습니다.');
     }
   }
+
+
+  useEffect(()=>{
+    const pwRegex = new RegExp('^[a-zA-Z0-9\W_]{6,}$');
+
+    if(inputPw.match(pwRegex)){
+      setIsCheck('비번 가능');
+      setNextComparePw(true)
+      if(inputPw === inputComparePw){
+        setIsCheck('최종 확인')
+      }else{
+        setIsCheck('비번 불일치')
+      }
+    }else {
+      setIsCheck('비번 불가능');
+         }
+      
+   
+  }, [inputPw, inputComparePw])
+  
+
 
   auth.onAuthStateChanged((user)=>{
     if(user){
@@ -112,7 +167,7 @@ const SignUpScreen = () => {
           <Text>지금 회원가입을 통해 다양한 편의를 느껴보세요.</Text>
         </View>
         {
-          error && <Text>{error}</Text>
+          error && <Text style={{fontSize:wp('3.5%'), color:'red'}}>{error}</Text>
         }
         <View style={styles.textInputContainer}>
           <View>
@@ -133,27 +188,35 @@ const SignUpScreen = () => {
               onBlur={() => setIsEmailFocus(false)}
               fontSize={wp("3%")}
             />
-            <TouchableOpacity onPress={()=>checkDuplication(inputEmail)}
+            <TouchableOpacity onPress={()=>checkEmailDuplication(inputEmail)}
               style={styles.duplicationButton}>
               <Text>중복확인</Text>
             </TouchableOpacity>
           </View>
           {
             isCheck === '존재' && (
-              <Text>이미 존재하는 이메일입니다.</Text>
+              <Text style={{fontSize:wp('3.5%'), color:'blue'}}>이미 존재하는 이메일입니다.</Text>
             )
           }
 
           {
             isCheck === '미존재' && (
-              <Text>사용 가능합니다.</Text>
+              <Text style={{fontSize:wp('3.5%')}}>사용 가능합니다.</Text>
             )
           }
+          {
+            isCheck === '잘못된 형식' && (
+              <Text style={{fontSize:wp('3.5%'), color:'red'}}>잘못된 이메일 형식입니다.</Text>
+            )
+          }
+          <View style={styles.invidualTextInputContainer}>
               <TextInput
               style={[
                 styles.inputStyle,
-                { borderColor: isPwFocus ? "black" : "gray", marginTop: 15 },
+                { borderColor: isPwFocus ? "black" : "gray",},
               ]}
+              editable={nextNickname}
+              backgroundColor={nextNickname ? 'ghostwhite' : 'gray'}
               placeholder="닉네임"
               onChangeText={setInputNickname}
               clearButtonMode="while-editing"
@@ -162,13 +225,36 @@ const SignUpScreen = () => {
               onBlur={() => setIsNickname(false)}
               fontSize={wp("3%")}
             />
+            <TouchableOpacity onPress={()=>checkNicknameDuplication(inputNickname)}
+              style={styles.duplicationButton}>
+              <Text>중복확인</Text>
+            </TouchableOpacity>
+            </View>
+            {
+            isCheck === '닉네임 존재' && (
+              <Text style={{fontSize:wp('3.5%'), color:'blue'}}>이미 존재하는 이메일입니다.</Text>
+            )
+          }
 
+          {
+            isCheck === '닉네임 미존재' && (
+              <Text style={{fontSize:wp('3.5%')}}>사용 가능합니다.</Text>
+            )
+          }
+          {
+            isCheck === '닉네임 잘못된 형식' && (
+              <Text style={{fontSize:wp('3.5%'), color:'red'}}>잘못된 형식입니다(영어, 한글, 숫자 조합만 가능합니다).</Text>
+            )
+          }
+          <View style={styles.invidualTextInputContainer}>
             <TextInput
               style={[
                 styles.inputStyle,
-                { borderColor: isPwFocus ? "black" : "gray", marginTop: 15 },
+                { borderColor: isPwFocus ? "black" : "gray" },
               ]}
               secureTextEntry={true}
+              editable={nextPw}
+              backgroundColor={nextPw ? 'ghostwhite' : 'gray'}
               placeholder="1차 비밀번호"
               onChangeText={setInputPw}
               clearButtonMode="while-editing"
@@ -177,21 +263,46 @@ const SignUpScreen = () => {
               onBlur={() => setIsPwFocus(false)}
               fontSize={wp("3%")}
             />
+            </View>
 
+            {
+            isCheck === '비번 가능' && (
+              <Text style={{fontSize:wp('3.5%')}}>사용 가능합니다.</Text>
+            )
+          }
+          {
+            inputPw.length > 0 && isCheck === '비번 불가능' && (
+              <Text style={{fontSize:wp('3.5%'), color:'red'}}>잘못된 형식입니다(특수문자 X, 최소 1개의 영어 및 숫자를 포함 6자리 이상).</Text>
+            )
+          }
+          <View style={styles.invidualTextInputContainer}>
             <TextInput
               style={[
                 styles.inputStyle,
-                { borderColor: isComparePw ? "black" : "gray", marginTop: 15 },
+                { borderColor: isComparePw ? "black" : "gray",},
               ]}
               secureTextEntry={true}
               placeholder="2차 비밀번호"
+              editable={nextComparePw}
               onChangeText={setInputComparePw}
               clearButtonMode="while-editing"
+              backgroundColor={nextComparePw ? 'ghostwhite' : 'gray'}
               borderWidth={1}
               onFocus={() => setIsComparePw(true)}
               onBlur={() => setIsComparePw(false)}
               fontSize={wp("3%")}
             />
+            </View>
+            {
+            isCheck === '최종 확인' && (
+              <Text style={{fontSize:wp('3.5%'),}}>일치합니다.</Text>
+            )
+          }
+            {
+            inputComparePw.length > 0 && isCheck === '비번 불일치' && (
+              <Text style={{fontSize:wp('3.5%'), color:'red'}}>비밀번호가 일치하지 않습니다.</Text>
+            )
+          }
           </View>
           
         </View>
@@ -200,7 +311,6 @@ const SignUpScreen = () => {
       
       <View style={styles.submitContainer}>
             <TouchableOpacity onPress={createAccount}
-            // disabled={!inputEmail || !inputPw || !inputComparePw}
             style={styles.signUpButton}>
                 <Text style={styles.buttonText}>회원가입</Text>
             </TouchableOpacity>
@@ -209,10 +319,6 @@ const SignUpScreen = () => {
                 <Text style={styles.gobackText}>취소하고 돌아가기</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={signOut}
-          style={{bottom:20}}>
-            <Text>로그아웃</Text>
-          </TouchableOpacity>
     </View>
     </ScrollView>
   );
@@ -236,14 +342,13 @@ const styles = StyleSheet.create({
     },
 
     signUpContainer : {
-        borderWidth : 0,
-        width : wp('80%'),
-        height : hp('30%'),
+        width : wp('90%'),
+        height : hp('35%'),
         marginTop : 10,
+        alignItems : 'center'
     },
 
     textInputContainer : {
-        borderWidth : 0,
         height : hp('25%'),
         marginTop : 10,
     },
@@ -260,10 +365,8 @@ const styles = StyleSheet.create({
       },
 
       submitContainer : {
-        borderWidth : 0,
         width : wp('80%'),
         height : hp('20%'),
-        marginTop : 5,
         justifyContent : 'center',
         alignItems : 'center',
 
@@ -296,7 +399,6 @@ const styles = StyleSheet.create({
       invidualTextInputContainer : {
         flexDirection : 'row',
         justifyContent : 'space-between',
-        borderWidth : 1,
         width : wp('85%'),
         alignItems : 'center',
         height : hp('7%'),

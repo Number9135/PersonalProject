@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { DrawerItem } from '@react-navigation/drawer';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import { Drawer, Avatar, Title, Caption, Image } from 'react-native-paper'
@@ -7,7 +7,7 @@ import { DrawerContentScrollView, } from '@react-navigation/drawer';
 import { SimpleLineIcons, MaterialIcons  } from '@expo/vector-icons';
 import { useNavigation, params } from '@react-navigation/core';
 import {logoutButton } from '../page/LoginScreen';
-import { auth } from '../../../firebaseConfig';
+import { auth, firebase_db } from '../../../firebaseConfig';
 import MyPage from '../page/MyPage';
 
 const DrawerContent = ({props}) => {
@@ -15,6 +15,7 @@ const DrawerContent = ({props}) => {
 const navigation = useNavigation();
 
 const [loggedIn, setLoggedIn] = useState(false);
+
 
 auth.onAuthStateChanged((user) => {
   if(user){
@@ -39,11 +40,11 @@ const logoutHandler = async() => {
         <DrawerContentScrollView contentContainerStyle={styles.drawerContainer} {...props}>
             <View style={styles.profileContainer}>
                 <Avatar.Image
-                    source={require('../../../assets/loginImage.jpg')}
+                    
                     size={wp('15')}
                 />
                 <View style={{paddingLeft:10,}}>
-                <Text style={{fontSize:wp('4%'), fontWeight:'500'}}>YunSu님</Text>
+                <Text style={{fontSize:wp('4%'), fontWeight:'500'}}> 님</Text>
                 <Text>반갑습니다.</Text>
                 </View> 
             </View>

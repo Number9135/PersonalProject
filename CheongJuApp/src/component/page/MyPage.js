@@ -1,23 +1,25 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {widthPercentageToDP as wp, heightPercentageToDP as hp,} from "react-native-responsive-screen";
 import { Avatar } from 'react-native-paper';
 import { MaterialIcons, Ionicons, Feather, MaterialCommunityIcons   } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
+import {auth, firebase_db} from '../../../firebaseConfig';
 
 
 export default function MyPage() {
 
   const navigation = useNavigation();
+  
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <Avatar.Image size={wp("20%")} style={styles.infoImage} />
+        <Avatar.Image size={wp("20%")} style={styles.infoImage}/>
         <View style={styles.infoText}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text style={{ fontSize: wp("5%"), fontWeight: "600" }}>
-              윤수님
+              님
             </Text>
             <Text style={{ fontSize: wp("4%"), marginLeft: 10 }}>
               마이페이지
