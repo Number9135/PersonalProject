@@ -102,6 +102,7 @@ const SignUpScreen = () => {
         .then(() => {
           auth.currentUser.updateProfile({
             displayName : inputNickname,
+            UserName : inputEmail,
           }).then(()=>{
             firebase_db.ref('users/' + auth.currentUser.uid + '/profile').set({
               UserName : inputNickname,
@@ -109,7 +110,9 @@ const SignUpScreen = () => {
               Password : inputPw,
               CreateDate : createDate
             })
-          }).then(()=> navigation.navigate('메인페이지'))
+          }).then(()=>{
+            console.log('성공')
+            navigation.navigate('메인페이지')})
         })
       }else{
         setError("비밀번호가 일치하지 않습니다.");

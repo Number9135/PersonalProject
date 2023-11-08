@@ -15,6 +15,7 @@ const UpdateInfo = () => {
     const [isErr, setIsErr] = useState(null)
     const dispatch = useDispatch();
     const [displayName, setDisplayName] = useState('');
+    const [isImg, setIsImg] = useState(null);
     const getDisplayName = useSelector((state)=> state.userInfo.displayName);
     const getPhotoURL = useSelector((state)=> state.userInfo.photoURL)
 
@@ -102,7 +103,7 @@ const UpdateInfo = () => {
         try{
             if(isErr === 'possible'){
                 await auth.currentUser.updateProfile({
-                    UserName : getDisplayName
+                    displayName : getDisplayName,
                 })
                 .then(()=>{
                 firebase_db.ref('users/' + auth.currentUser.uid + '/profile').update({

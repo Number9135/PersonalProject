@@ -5,21 +5,55 @@ import { Avatar } from 'react-native-paper';
 import { MaterialIcons, Ionicons, Feather, MaterialCommunityIcons   } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/core';
 import {auth, firebase_db} from '../../../firebaseConfig';
+import { useSelector } from 'react-redux';
 
 
 export default function MyPage() {
 
   const navigation = useNavigation();
-  
+
+  const [isAuth, setIsAuth] = useState(false);
+  const [isImg, setIsImg] = useState(null)
+  const [isDisplayName, setIsDisplayName] = useState('');
+
+  auth.onAuthStateChanged((user)=>{
+    if(user){
+      setIsAuth(true)
+    }else{
+     //console.log('없음')
+    }
+  })
+
+useEffect(() => {
+  const userId = auth.currentUser.uid;
+
+  const userProfileRef = firebase_db.ref(`users/${userId}/profile`);
+  userProfileRef.on('value', (snapshot) => {
+    const profileData = snapshot.val();
+    if (profileData) {
+      setIsImg(profileData.PhotoURL);
+      setIsDisplayName(profileData.UserName);
+    }
+  });
+
+  return () => {
+    userProfileRef.off('value');
+  };
+}, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.infoContainer}>
-        <Avatar.Image size={wp("20%")} style={styles.infoImage}/>
+        <Avatar.Image size={wp("20%")} style={styles.infoImage} source={{uri:isImg}}/>
         <View style={styles.infoText}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Text style={{ fontSize: wp("5%"), fontWeight: "600" }}>
-              님
+            {isDisplayName}  님
+            {
+              isDisplayName == null && (
+                <Text>asd</Text>
+              )
+            }
             </Text>
             <Text style={{ fontSize: wp("4%"), marginLeft: 10 }}>
               마이페이지

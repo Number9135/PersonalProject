@@ -9,12 +9,18 @@ import { useNavigation, params } from '@react-navigation/core';
 import {logoutButton } from '../page/LoginScreen';
 import { auth, firebase_db } from '../../../firebaseConfig';
 import MyPage from '../page/MyPage';
+import { useSelector } from 'react-redux';
 
 const DrawerContent = ({props}) => {
 
 const navigation = useNavigation();
 
 const [loggedIn, setLoggedIn] = useState(false);
+
+const displayName = useSelector((state) => state.userInfo.displayName)
+const photoURL = useSelector((state) => state.userInfo.photoURL)
+console.log(photoURL)
+console.log(displayName)
 
 
 auth.onAuthStateChanged((user) => {
@@ -40,11 +46,11 @@ const logoutHandler = async() => {
         <DrawerContentScrollView contentContainerStyle={styles.drawerContainer} {...props}>
             <View style={styles.profileContainer}>
                 <Avatar.Image
-                    
+                    source={{uri:photoURL}}
                     size={wp('15')}
                 />
                 <View style={{paddingLeft:10,}}>
-                <Text style={{fontSize:wp('4%'), fontWeight:'500'}}> 님</Text>
+                <Text style={{fontSize:wp('4%'), fontWeight:'500'}}>{displayName} 님</Text>
                 <Text>반갑습니다.</Text>
                 </View> 
             </View>
@@ -104,7 +110,7 @@ const logoutHandler = async() => {
 
             <TouchableOpacity onPress={()=>{logoutHandler()
             alert('로그아웃 되었습니다.')
-        navigation.goBack()}}
+        navigation.navigate('로그인')}}
                 style={styles.loginButton}>
                 <Text style={styles.loginText}>로그아웃</Text>
                 <MaterialIcons name="login" size={wp('5%')} color="black" />          

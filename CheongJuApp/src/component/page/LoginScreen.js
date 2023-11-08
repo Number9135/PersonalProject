@@ -2,41 +2,45 @@ import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'reac
 import React, { useEffect, useState } from 'react';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/core';
-import {auth} from '../../../firebaseConfig';
-import { onAuthStateChanged } from 'firebase/auth';
+import {auth, firebase_db} from '../../../firebaseConfig';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectDisplayName, selectPhotoURL, selectUserEmail } from '../redux/modules/AuthSlice';
 
 const LoginScreen = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const [isEmailFocus, setIsEmailFocus] = useState(false);
   const [isPwFocus, setIsPwFocus] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('');
-
+  const [isDisplayName, setIsDisplayName] = useState(null);
   
   
   const loginHandler = () => {
-    auth.signInWithEmailAndPassword("dynamic_ys@naver.com", "dbstn721")
+    auth.signInWithEmailAndPassword(email, password)
     .then((userCredential)=>{const user = userCredential.user})
     .then((res)=>console.log(res))
     .then(()=>navigation.navigate("메인페이지"))
   }
 
-  auth.onAuthStateChanged((user) => {
-    if(user){
-      console.log(auth.currentUser)
-    }else{
-      console.log('로그아웃');
-    }
-  })
-  
+ 
 
-    
-  useEffect(()=>{
-    setTimeout(()=>{
-      setEmail('');
-    }, 4000)
-  }, [errMsg])
+
+ 
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        //dispatch(selectDisplayName(user.displayName));
+        console.log('로그인')
+      } else {
+        console.log('로그아웃');
+      }
+})
+
+  const signOut = () => {
+    auth.signOut();
+  }
+  
 
   return (
     <View style={styles.container}>
@@ -101,6 +105,11 @@ const LoginScreen = () => {
           <TouchableOpacity onPress={()=>{navigation.goBack()}}
             style={{marginTop:10,}}>
             <Text style={{fontSize:wp('3%'), fontWeight:'700'}}>취소하고 돌아가기</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPressIn={()=>signOut}
+          onPress={()=>{navigation.goBack()}}
+            style={{marginTop:10,}}>
+            <Text style={{fontSize:wp('3%'), fontWeight:'700', left:100}}>로그아웃</Text>
           </TouchableOpacity>
       </View>
     </View>
